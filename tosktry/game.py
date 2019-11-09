@@ -28,8 +28,10 @@ class Game:
     def _main(self):
         background_color = (40, 10, 40)
 
-        done = 0
-        while not done:
+        self.done = False
+        while not self.done:
+            self._process_input()
+
             self.clock.tick(60)
 
             self.screen.fill(background_color)
@@ -39,19 +41,20 @@ class Game:
 
             pygame.display.update()
 
-            for e in pygame.event.get():
-                if e.type == QUIT or (e.type == KEYUP and e.key == K_ESCAPE):
-                    done = 1
-                    break
+    def _process_input(self):
+        for e in pygame.event.get():
+            if e.type == QUIT or (e.type == KEYUP and e.key == K_ESCAPE):
+                self.done = True
+                break
 
-                if e.type == KEYDOWN and e.key == K_RIGHT:
-                    self.move_right()
-                if e.type == KEYDOWN and e.key == K_LEFT:
-                    self.move_left()
-                if e.type == KEYDOWN and e.key == K_SPACE:
-                    self.start_fall()
-                if e.type == KEYDOWN and e.key == K_UP:
-                    self.rotate()
+            if e.type == KEYDOWN and e.key == K_RIGHT:
+                self.move_right()
+            if e.type == KEYDOWN and e.key == K_LEFT:
+                self.move_left()
+            if e.type == KEYDOWN and e.key == K_SPACE:
+                self.start_fall()
+            if e.type == KEYDOWN and e.key == K_UP:
+                self.rotate()
 
     def move_left(self):
         pass
