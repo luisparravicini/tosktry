@@ -78,9 +78,6 @@ class Game:
     def rotate(self):
         self.tetro.rotate()
 
-    def fall_faster(self):
-        pass
-
     def move_down(self):
         x = self.tetro.pos[1] + 1
         self.tetro.pos[1] = x
