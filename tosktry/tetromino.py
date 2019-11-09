@@ -14,16 +14,23 @@ class Tetromino:
         #EF7922
         self.color = Color('#EF7922')
         self.pieces = [
-            'xxxx',
-            '    ',
-            '    ',
-            '    ',
-            '    ',
+            [1, 0, 0, 0],
+            [1, 1, 1, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
         ]
 
     def rotate(self):
-        print('rotate')
-        pass
+        size = 4
+        new_piece = [[0] * size for _ in range(size)]
+        i = size - 1
+        for row in self.pieces:
+            for j in range(size):
+                new_piece[j][i] = row[j]
+            i -= 1
+
+        self.pieces = new_piece
+
 
     def draw(self, surface, cell_size):
         delta = 2
@@ -31,7 +38,7 @@ class Tetromino:
         for row in self.pieces:
             x = self.pos[0]
             for cell in row:
-                if cell == 'x':
+                if cell == 1:
                     pygame.draw.rect(surface, self.color,
                         (x * cell_size + delta,
                         y * cell_size + delta,

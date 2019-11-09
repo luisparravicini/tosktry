@@ -52,9 +52,9 @@ class Game:
                 self.move_right()
             if e.type == KEYDOWN and e.key == K_LEFT:
                 self.move_left()
-            if e.type == KEYDOWN and e.key == K_UP:
-                self.start_fall()
             if e.type == KEYDOWN and e.key == K_DOWN:
+                self.start_fall()
+            if e.type == KEYDOWN and e.key == K_UP:
                 self.rotate()
 
     def move_left(self):
