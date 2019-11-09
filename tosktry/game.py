@@ -2,6 +2,7 @@ import random
 import pygame
 from pygame.locals import *
 from .tetromino import Tetromino
+from .fall_timer import FallTimer
 
 
 class Game:
@@ -23,11 +24,9 @@ class Game:
         self.clock = pygame.time.Clock()
 
     def _update(self, dt):
-        self.acum_fall += dt
-        if self.acum_fall > self.fall_time * self.falling_mod:
-            self.acum_fall = 0
+        reached_max = self.falling_timer.update(dt)
+        if reached_max:
             self.move_down()
-        pass
 
     def _draw(self):
         self.tetro.draw(self.screen, self.cell_size)
@@ -36,9 +35,7 @@ class Game:
         background_color = (40, 10, 40)
 
         self.done = False
-        self.fall_time = 800
-        self.acum_fall = 0
-        self.falling_mod = 1
+        self.falling_timer = FallTimer(800)
         self.tetro = Tetromino(2, 2)
         while not self.done:
             dt = self.clock.tick(60)
@@ -61,9 +58,9 @@ class Game:
             if e.type == KEYDOWN and e.key == K_LEFT:
                 self.move_left()
             if e.type == KEYDOWN and e.key == K_DOWN:
-                self.falling_mod = 0.1
+                self.falling_timer.enable_fast()
             if e.type == KEYUP and e.key == K_DOWN:
-                self.falling_mod = 1
+                self.falling_timer.disable_fast()
             if e.type == KEYDOWN and e.key == K_UP:
                 self.rotate()
 
