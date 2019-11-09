@@ -26,21 +26,13 @@ class Game:
         pass
 
     def _draw(self):
-        delta = 2
-        pygame.draw.rect(self.screen, self.tetro.color,
-            (self.tetro_pos[0] * self.cell_size + delta,
-            self.tetro_pos[1] * self.cell_size + delta,
-            self.cell_size - delta * 2,
-            self.cell_size - delta * 2
-            ), width=0)
-        self.screen
+        self.tetro.draw(self.screen, self.cell_size)
 
     def _main(self):
         background_color = (40, 10, 40)
 
         self.done = False
-        self.tetro_pos = [2, 2]
-        self.tetro = Tetromino()
+        self.tetro = Tetromino(2, 2)
         while not self.done:
             self._process_input()
             self._update()
@@ -60,18 +52,21 @@ class Game:
                 self.move_right()
             if e.type == KEYDOWN and e.key == K_LEFT:
                 self.move_left()
-            if e.type == KEYDOWN and e.key == K_SPACE:
-                self.start_fall()
             if e.type == KEYDOWN and e.key == K_UP:
+                self.start_fall()
+            if e.type == KEYDOWN and e.key == K_DOWN:
                 self.rotate()
 
     def move_left(self):
+        self.tetro.pos[0] -= 1
         pass
 
     def move_right(self):
+        self.tetro.pos[0] += 1
         pass
 
     def rotate(self):
+        self.tetro.rotate()
         pass
 
     def start_fall(self):
