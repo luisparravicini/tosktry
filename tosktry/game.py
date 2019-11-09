@@ -1,6 +1,7 @@
 import random
 import pygame
 from pygame.locals import *
+from .tetromino import Tetromino
 
 
 class Game:
@@ -10,7 +11,7 @@ class Game:
         self._main()
 
     def _setup(self):
-        self.cell_size = 48
+        self.cell_size = 16
         self.screen_size = (
             self.cell_size * 10,
             self.cell_size * 20)
@@ -18,27 +19,35 @@ class Game:
 
         pygame.init()
         self.screen = pygame.display.set_mode(self.screen_size)
-        self.bkg_surface = pygame.Surface(self.screen_size)
         pygame.display.set_caption('Tosktry')
         self.clock = pygame.time.Clock()
 
     def _update(self):
         pass
 
+    def _draw(self):
+        delta = 2
+        pygame.draw.rect(self.screen, self.tetro.color,
+            (self.tetro_pos[0] * self.cell_size + delta,
+            self.tetro_pos[1] * self.cell_size + delta,
+            self.cell_size - delta * 2,
+            self.cell_size - delta * 2
+            ), width=0)
+        self.screen
+
     def _main(self):
         background_color = (40, 10, 40)
 
         self.done = False
+        self.tetro_pos = [2, 2]
+        self.tetro = Tetromino()
         while not self.done:
             self._process_input()
+            self._update()
 
             self.clock.tick(60)
-
             self.screen.fill(background_color)
-
-            self._update()
-            self.screen.blit(self.bkg_surface, (0, 0))
-
+            self._draw()
             pygame.display.update()
 
     def _process_input(self):
