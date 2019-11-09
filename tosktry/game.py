@@ -22,7 +22,11 @@ class Game:
         pygame.display.set_caption('Tosktry')
         self.clock = pygame.time.Clock()
 
-    def _update(self):
+    def _update(self, dt):
+        self.acum_fall += dt
+        if self.acum_fall > self.fall_time * self.falling_mod:
+            self.acum_fall = 0
+            self.move_down()
         pass
 
     def _draw(self):
@@ -32,12 +36,16 @@ class Game:
         background_color = (40, 10, 40)
 
         self.done = False
+        self.fall_time = 800
+        self.acum_fall = 0
+        self.falling_mod = 1
         self.tetro = Tetromino(2, 2)
         while not self.done:
-            self._process_input()
-            self._update()
+            dt = self.clock.tick(60)
 
-            self.clock.tick(60)
+            self._process_input()
+            self._update(dt)
+
             self.screen.fill(background_color)
             self._draw()
             pygame.display.update()
@@ -53,21 +61,26 @@ class Game:
             if e.type == KEYDOWN and e.key == K_LEFT:
                 self.move_left()
             if e.type == KEYDOWN and e.key == K_DOWN:
-                self.start_fall()
+                self.falling_mod = 0.1
+            if e.type == KEYUP and e.key == K_DOWN:
+                self.falling_mod = 1
             if e.type == KEYDOWN and e.key == K_UP:
                 self.rotate()
 
     def move_left(self):
-        self.tetro.pos[0] -= 1
-        pass
+        x = self.tetro.pos[0] - 1
+        self.tetro.pos[0] = x
 
     def move_right(self):
-        self.tetro.pos[0] += 1
-        pass
+        x = self.tetro.pos[0] + 1
+        self.tetro.pos[0] = x
 
     def rotate(self):
         self.tetro.rotate()
+
+    def fall_faster(self):
         pass
 
-    def start_fall(self):
-        pass
+    def move_down(self):
+        x = self.tetro.pos[1] + 1
+        self.tetro.pos[1] = x
