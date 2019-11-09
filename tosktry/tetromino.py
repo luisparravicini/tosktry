@@ -73,6 +73,12 @@ class Tetromino:
 
         self.pieces = new_piece
 
+    def height(self):
+        y = len(self.pieces) - 1
+        while y > 0 and 1 not in self.pieces[y]:
+            y -= 1
+        return y
+
     def draw(self, surface, cell_size):
         delta = 2
         y = self.pos[1]

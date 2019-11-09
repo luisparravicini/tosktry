@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 from .tetromino import Tetromino
 from .fall_timer import FallTimer
+from .board import Board
 
 
 class Game:
@@ -12,16 +13,19 @@ class Game:
         self._main()
 
     def _setup(self):
+        self.board = Board(10, 20)
         self.cell_size = 16
         self.screen_size = (
-            self.cell_size * 10,
-            self.cell_size * 20)
+            self.cell_size * self.board.size[0],
+            self.cell_size * self.board.size[1])
         random.seed()
 
         pygame.init()
         self.screen = pygame.display.set_mode(self.screen_size)
         pygame.display.set_caption('Tosktry')
         self.clock = pygame.time.Clock()
+
+        self.falling_timer = FallTimer(800)
 
     def _update(self, dt):
         reached_max = self.falling_timer.update(dt)
@@ -31,12 +35,14 @@ class Game:
     def _draw(self):
         self.tetro.draw(self.screen, self.cell_size)
 
+    def _createTetro(self):
+        self.tetro = Tetromino(self.board.size[0] // 2 - 2, 0)
+
     def _main(self):
         background_color = (40, 10, 40)
 
         self.done = False
-        self.falling_timer = FallTimer(800)
-        self.tetro = Tetromino(2, 2)
+        self._createTetro()
         while not self.done:
             dt = self.clock.tick(60)
 
@@ -76,5 +82,10 @@ class Game:
         self.tetro.rotate()
 
     def move_down(self):
-        x = self.tetro.pos[1] + 1
-        self.tetro.pos[1] = x
+        new_pos = list(self.tetro.pos)
+        new_pos[1] += 1
+        if self.board.can_move(self.tetro, new_pos):
+            self.tetro.pos = new_pos
+        else:
+            self.board.consume(self.tetro)
+            self._createTetro()
