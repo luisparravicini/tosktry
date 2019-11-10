@@ -79,6 +79,24 @@ class Tetromino:
             y -= 1
         return y
 
+    def first_used_x(self):
+        x = 0
+        while x < len(self.pieces[0]):
+            for row in self.pieces:
+                if row[x] == 1:
+                    return x
+            x += 1
+        return x
+
+    def last_used_x(self):
+        x = len(self.pieces[0]) - 1
+        while x >= 0:
+            for row in self.pieces:
+                if row[x] == 1:
+                    return x
+            x -= 1
+        return x
+
     def draw(self, surface, cell_size):
         delta = 2
         y = self.pos[1]

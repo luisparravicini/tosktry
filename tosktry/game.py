@@ -71,12 +71,16 @@ class Game:
                 self.rotate()
 
     def move_left(self):
-        x = self.tetro.pos[0] - 1
-        self.tetro.pos[0] = x
+        self.move_horiz(-1)
 
     def move_right(self):
-        x = self.tetro.pos[0] + 1
-        self.tetro.pos[0] = x
+        self.move_horiz(1)
+
+    def move_horiz(self, dx):
+        new_pos = list(self.tetro.pos)
+        new_pos[0] += dx
+        if self.board.can_move(self.tetro, new_pos):
+            self.tetro.pos = new_pos
 
     def rotate(self):
         self.tetro.rotate()
