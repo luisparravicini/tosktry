@@ -27,6 +27,8 @@ class Game:
 
         self.falling_timer = FallTimer(800)
 
+        pygame.key.set_repeat(150)
+
     def _update(self, dt):
         reached_max = self.falling_timer.update(dt)
         if reached_max:
