@@ -1,3 +1,5 @@
+from .tetromino import Tetromino, COLORS
+
 
 class Board:
     def __init__(self, width, height):
@@ -5,6 +7,30 @@ class Board:
         self.cells = [[None] * width for _ in range(height)]
 
     def can_move(self, tetro, pos):
+        if not self._inside_board(tetro, pos):
+            return False
+
+        if self._collides_with_others(tetro, pos):
+            return False
+
+        return True
+
+    def _collides_with_others(self, tetro, pos):
+        for y in range(len(tetro.pieces)):
+            row = tetro.pieces[y]
+            for x in range(len(row)):
+                if row[x] == 0:
+                    continue
+
+                bx = pos[0] + x
+                by = pos[1] + y
+
+                if self.cells[by][bx] is not None:
+                    return True
+
+        return False
+
+    def _inside_board(self, tetro, pos):
         bottom = pos[1] + tetro.height()
         if bottom >= self.size[1]:
             return False
@@ -32,4 +58,18 @@ class Board:
             tetro.pos[0] = self.size[0] - last_used - 1
 
     def consume(self, tetro):
-        pass
+        for y in range(len(tetro.pieces)):
+            row = tetro.pieces[y]
+            for x in range(len(row)):
+                bx = tetro.pos[0] + x
+                by = tetro.pos[1] + y
+                if row[x] != 0:
+                    self.cells[by][bx] = tetro.id
+
+    def draw(self, surface, cell_size):
+        for y in range(self.size[1]):
+            for x in range(self.size[0]):
+                cell_id = self.cells[y][x]
+                if cell_id is not None:
+                    color = COLORS[cell_id]
+                    Tetromino.draw_piece(surface, (x, y), cell_size, color)

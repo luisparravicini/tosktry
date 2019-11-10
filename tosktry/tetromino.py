@@ -5,13 +5,13 @@ import copy
 
 
 COLORS = [
-    '#F7D309',
-    '#31C8EF',
-    '#AE4D9C',
-    '#42B742',
-    '#EF2029',
-    '#5A65AE',
-    '#EF7922',
+    Color('#F7D309'),
+    Color('#31C8EF'),
+    Color('#AE4D9C'),
+    Color('#42B742'),
+    Color('#EF2029'),
+    Color('#5A65AE'),
+    Color('#EF7922'),
 ]
 PIECES = [
     [
@@ -58,9 +58,9 @@ class Tetromino:
     def __init__(self, x, y):
         self.pos = [x, y]
 
-        i = random.randrange(0, len(COLORS))
-        self.color = Color(COLORS[i])
-        self.pieces = copy.deepcopy(PIECES[i])
+        self.id = random.randrange(0, len(COLORS))
+        self.color = COLORS[self.id]
+        self.pieces = copy.deepcopy(PIECES[self.id])
 
     def rotate(self):
         size = len(self.pieces)
@@ -98,19 +98,23 @@ class Tetromino:
         return x
 
     def draw(self, surface, cell_size):
-        delta = 2
         y = self.pos[1]
         for row in self.pieces:
             x = self.pos[0]
             for cell in row:
                 if cell == 1:
-                    pygame.draw.rect(
-                        surface,
-                        self.color,
-                        (x * cell_size + delta,
-                         y * cell_size + delta,
-                         cell_size - delta * 2,
-                         cell_size - delta * 2),
-                        width=0)
+                    Tetromino.draw_piece(surface, (x, y), cell_size, self.color)
                 x += 1
             y += 1
+
+    @staticmethod
+    def draw_piece(surface, pos, cell_size, color):
+        delta = 2
+        pygame.draw.rect(
+            surface,
+            color,
+            (pos[0] * cell_size + delta,
+             pos[1] * cell_size + delta,
+             cell_size - delta * 2,
+             cell_size - delta * 2),
+            width=0)

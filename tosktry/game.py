@@ -34,6 +34,7 @@ class Game:
 
     def _draw(self):
         self.tetro.draw(self.screen, self.cell_size)
+        self.board.draw(self.screen, self.cell_size)
 
     def _createTetro(self):
         self.tetro = Tetromino(self.board.size[0] // 2 - 2, 0)
