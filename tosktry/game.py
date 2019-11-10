@@ -71,25 +71,27 @@ class Game:
                 self.rotate()
 
     def move_left(self):
-        self.move_horiz(-1)
+        self.move((-1, 0))
 
     def move_right(self):
-        self.move_horiz(1)
-
-    def move_horiz(self, dx):
-        new_pos = list(self.tetro.pos)
-        new_pos[0] += dx
-        if self.board.can_move(self.tetro, new_pos):
-            self.tetro.pos = new_pos
+        self.move((1, 0))
 
     def rotate(self):
         self.tetro.rotate()
+        self.board.push_into(self.tetro)
 
     def move_down(self):
-        new_pos = list(self.tetro.pos)
-        new_pos[1] += 1
-        if self.board.can_move(self.tetro, new_pos):
-            self.tetro.pos = new_pos
-        else:
+        if not self.move((0, 1)):
             self.board.consume(self.tetro)
             self._createTetro()
+
+    def move(self, deltas):
+        new_pos = list(self.tetro.pos)
+        new_pos[0] += deltas[0]
+        new_pos[1] += deltas[1]
+
+        can_move = self.board.can_move(self.tetro, new_pos)
+        if can_move:
+            self.tetro.pos = new_pos
+
+        return can_move

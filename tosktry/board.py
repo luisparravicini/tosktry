@@ -19,5 +19,17 @@ class Board:
 
         return True
 
+    def push_into(self, tetro):
+        first_used = tetro.first_used_x()
+        left = tetro.pos[0] + first_used
+        if left < 0:
+            tetro.pos[0] = first_used
+            return
+
+        last_used = tetro.last_used_x()
+        right = tetro.pos[0] + last_used
+        if right >= self.size[0]:
+            tetro.pos[0] = self.size[0] - last_used - 1
+
     def consume(self, tetro):
         pass
