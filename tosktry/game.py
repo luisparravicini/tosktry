@@ -4,7 +4,7 @@ from pygame.locals import *
 from .tetromino import Tetromino
 from .board import Board
 from .bot import Bot
-from .fsm import GameFSM
+from .fsm import GameFSM, State
 
 
 class Game:
@@ -29,6 +29,7 @@ class Game:
         pygame.display.set_caption('Tosktry')
         self.clock = pygame.time.Clock()
         pygame.key.set_repeat(150)
+        self.highlighted_lines = None
         self.fsm = GameFSM(self)
 
     def enable_bot(self, enabled):
@@ -43,7 +44,8 @@ class Game:
 
     def _draw(self):
         self.tetro.draw(self.screen, self.cell_size)
-        self.board.draw(self.screen, self.cell_size, self.completed_lines)
+        self.board.draw(self.screen, self.cell_size, self.highlighted_lines)
+        self.fsm.state.draw(self.screen)
 
     def _createTetro(self):
         self.tetro = Tetromino(self.board.size[0] // 2 - 2, 0)
@@ -51,7 +53,6 @@ class Game:
     def _main(self):
         background_color = (40, 10, 40)
 
-        self.completed_lines = None
         self.done = False
         self._createTetro()
         while not self.done:
@@ -108,15 +109,15 @@ class Game:
         if not self._move((0, 1)):
             self.board.consume(self.tetro)
 
-            completed_lines = self.board.check_completed_lines()
-            if len(completed_lines) > 0:
-                self.fsm.change(State.REMOVING_LINES)
-                self.completed_lines = completed_lines
-
             self._createTetro()
             if self.board.collides_with_others(self.tetro, self.tetro.pos):
+                self.fsm.change(State.GAME_OVER)
+                return
 
-                print('game over!')
+            highlighted_lines = self.board.check_completed_lines()
+            if len(highlighted_lines) > 0:
+                self.fsm.change(State.REMOVING_LINES)
+                self.highlighted_lines = highlighted_lines
 
     def _move(self, deltas):
         new_pos = list(self.tetro.pos)

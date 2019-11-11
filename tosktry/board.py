@@ -4,7 +4,7 @@ from .tetromino import Tetromino, COLORS
 class Board:
     def __init__(self, width, height):
         self.size = (width, height)
-        self.cells = [[None] * width for _ in range(height)]
+        self.clear()
 
     def can_move(self, tetro, pos):
         if not self.inside_board(tetro, pos):
@@ -14,6 +14,9 @@ class Board:
             return False
 
         return True
+
+    def clear(self):
+        self.cells = [[None] * self.size[0] for _ in range(self.size[1])]
 
     def collides_with_others(self, tetro, pos):
         for y in range(len(tetro.pieces)):
