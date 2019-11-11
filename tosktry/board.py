@@ -56,16 +56,20 @@ class Board:
         return indices
 
     def push_into(self, tetro):
+        new_pos = list(tetro.pos)
         first_used = tetro.first_used_x()
-        left = tetro.pos[0] + first_used
+        left = new_pos[0] + first_used
         if left < 0:
-            tetro.pos[0] = first_used
+            new_pos[0] = first_used
             return
 
         last_used = tetro.last_used_x()
-        right = tetro.pos[0] + last_used
+        right = new_pos[0] + last_used
         if right >= self.size[0]:
-            tetro.pos[0] = self.size[0] - last_used - 1
+            new_pos[0] = self.size[0] - last_used - 1
+
+        if not self.collides_with_others(tetro, new_pos):
+            tetro.pos = new_pos
 
     def consume(self, tetro):
         for y in range(len(tetro.pieces)):
