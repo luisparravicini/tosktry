@@ -11,3 +11,4 @@ Runs with `tosktry.py`. Keys:
 * `up cursor`: Rotate 90 degrees
 * `down cursor`: Fall faster
 
+![](demo.gif)
