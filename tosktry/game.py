@@ -32,7 +32,7 @@ class Game:
     def _update(self, dt):
         reached_max = self.falling_timer.update(dt)
         if reached_max:
-            self.move_down()
+            self._move_down()
 
     def _draw(self):
         self.tetro.draw(self.screen, self.cell_size)
@@ -63,32 +63,32 @@ class Game:
                 break
 
             if e.type == KEYDOWN and e.key == K_RIGHT:
-                self.move_right()
+                self._move_right()
             if e.type == KEYDOWN and e.key == K_LEFT:
-                self.move_left()
+                self._move_left()
             if e.type == KEYDOWN and e.key == K_DOWN:
                 self.falling_timer.enable_fast()
             if e.type == KEYUP and e.key == K_DOWN:
                 self.falling_timer.disable_fast()
             if e.type == KEYDOWN and e.key == K_UP:
-                self.rotate()
+                self._rotate()
 
-    def move_left(self):
-        self.move((-1, 0))
+    def _move_left(self):
+        self._move((-1, 0))
 
-    def move_right(self):
-        self.move((1, 0))
+    def _move_right(self):
+        self._move((1, 0))
 
-    def rotate(self):
+    def _rotate(self):
         self.tetro.rotate()
         self.board.push_into(self.tetro)
 
-    def move_down(self):
-        if not self.move((0, 1)):
+    def _move_down(self):
+        if not self._move((0, 1)):
             self.board.consume(self.tetro)
             self._createTetro()
 
-    def move(self, deltas):
+    def _move(self, deltas):
         new_pos = list(self.tetro.pos)
         new_pos[0] += deltas[0]
         new_pos[1] += deltas[1]
