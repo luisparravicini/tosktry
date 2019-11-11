@@ -4,9 +4,13 @@ from pygame.locals import *
 from .tetromino import Tetromino
 from .timer import Timer
 from .board import Board
+from .bot import Bot
 
 
 class Game:
+
+    def __init__(self):
+        self.enable_bot(False)
 
     def run(self):
         self._setup()
@@ -24,10 +28,15 @@ class Game:
         self.screen = pygame.display.set_mode(self.screen_size)
         pygame.display.set_caption('Tosktry')
         self.clock = pygame.time.Clock()
-
         self.falling_timer = Timer(800)
-
         pygame.key.set_repeat(150)
+
+    def enable_bot(self, enabled):
+        if enabled:
+            bot = Bot()
+        else:
+            bot = None
+        self.bot = bot
 
     def _update(self, dt):
         if not self.removing_lines:
@@ -71,7 +80,13 @@ class Game:
             pygame.display.update()
 
     def _process_input(self):
-        for e in pygame.event.get():
+        events = pygame.event.get()
+        if self.bot is not None:
+            event = self.bot.next_move()
+            if event is not None:
+                events.append(event)
+
+        for e in events:
             if e.type == QUIT or (e.type == KEYUP and e.key == K_ESCAPE):
                 self.done = True
                 break

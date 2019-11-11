@@ -12,3 +12,6 @@ Runs with `tosktry.py`. Keys:
 * `down cursor`: Fall faster
 
 ![](demo.gif)
+
+
+The script accepts a `-b` argument to enable a bot to create random key events. It's been useful to find bugs that crashed the game.
