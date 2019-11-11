@@ -2,9 +2,9 @@ import random
 import pygame
 from pygame.locals import *
 from .tetromino import Tetromino
-from .timer import Timer
 from .board import Board
 from .bot import Bot
+from .fsm import GameFSM
 
 
 class Game:
@@ -28,8 +28,8 @@ class Game:
         self.screen = pygame.display.set_mode(self.screen_size)
         pygame.display.set_caption('Tosktry')
         self.clock = pygame.time.Clock()
-        self.falling_timer = Timer(800)
         pygame.key.set_repeat(150)
+        self.fsm = GameFSM(self)
 
     def enable_bot(self, enabled):
         if enabled:
@@ -39,20 +39,7 @@ class Game:
         self.bot = bot
 
     def _update(self, dt):
-        if not self.removing_lines:
-            reached_max = self.falling_timer.update(dt)
-            if reached_max:
-                self._move_down()
-        else:
-            self._update_remove_lines(dt)
-
-    def _update_remove_lines(self, dt):
-        reached_max = self.lineRemovalTimer.update(dt)
-        if reached_max:
-            self.board.remove_lines(self.completed_lines)
-            self.lineRemovalTimer = None
-            self.removing_lines = False
-            self.completed_lines = None
+        self.fsm.state.update(dt)
 
     def _draw(self):
         self.tetro.draw(self.screen, self.cell_size)
@@ -64,14 +51,13 @@ class Game:
     def _main(self):
         background_color = (40, 10, 40)
 
-        self.removing_lines = False
         self.completed_lines = None
         self.done = False
         self._createTetro()
         while not self.done:
             dt = self.clock.tick(60)
 
-            if not self.removing_lines:
+            if self.fsm.state.accept_input():
                 self._process_input()
             self._update(dt)
 
@@ -96,9 +82,9 @@ class Game:
             if e.type == KEYDOWN and e.key == K_LEFT:
                 self._move_left()
             if e.type == KEYDOWN and e.key == K_DOWN:
-                self.falling_timer.enable_fast()
+                self.fsm.state.timer.enable_fast()
             if e.type == KEYUP and e.key == K_DOWN:
-                self.falling_timer.disable_fast()
+                self.fsm.state.timer.disable_fast()
             if e.type == KEYDOWN and e.key == K_UP:
                 self._rotate()
 
@@ -121,15 +107,16 @@ class Game:
     def _move_down(self):
         if not self._move((0, 1)):
             self.board.consume(self.tetro)
+
             completed_lines = self.board.check_completed_lines()
             if len(completed_lines) > 0:
-                self._start_line_removal(completed_lines)
-            self._createTetro()
+                self.fsm.change(State.REMOVING_LINES)
+                self.completed_lines = completed_lines
 
-    def _start_line_removal(self, indices):
-        self.completed_lines = indices
-        self.removing_lines = True
-        self.lineRemovalTimer = Timer(250)
+            self._createTetro()
+            if self.board.collides_with_others(self.tetro, self.tetro.pos):
+
+                print('game over!')
 
     def _move(self, deltas):
         new_pos = list(self.tetro.pos)

@@ -10,12 +10,12 @@ class Board:
         if not self.inside_board(tetro, pos):
             return False
 
-        if self._collides_with_others(tetro, pos):
+        if self.collides_with_others(tetro, pos):
             return False
 
         return True
 
-    def _collides_with_others(self, tetro, pos):
+    def collides_with_others(self, tetro, pos):
         for y in range(len(tetro.pieces)):
             row = tetro.pieces[y]
             for x in range(len(row)):

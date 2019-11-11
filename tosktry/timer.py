@@ -5,6 +5,9 @@ class Timer:
         self.modifier = 1
         self.acum = 0
 
+    def reset(self):
+        self.acum = 0
+
     def update(self, dt):
         self.acum += dt
         reached_max = self.acum > self.max * self.modifier
