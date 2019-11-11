@@ -45,6 +45,13 @@ class Board:
 
         return True
 
+    def check_completed_lines(self):
+        indices = list()
+        for y in range(self.size[1]):
+            if all(v is not None for v in self.cells[y]):
+                indices.append(y)
+        return indices
+
     def push_into(self, tetro):
         first_used = tetro.first_used_x()
         left = tetro.pos[0] + first_used
@@ -66,10 +73,19 @@ class Board:
                 if row[x] != 0:
                     self.cells[by][bx] = tetro.id
 
-    def draw(self, surface, cell_size):
+    def remove_lines(self, indices):
+        for index in indices:
+            for y in range(index, 0, -1):
+                self.cells[y] = self.cells[y - 1]
+            self.cells[0] = [None] * len(self.cells[0])
+
+    def draw(self, surface, cell_size, completed_lines):
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 cell_id = self.cells[y][x]
                 if cell_id is not None:
-                    color = COLORS[cell_id]
+                    if completed_lines is not None and y in completed_lines:
+                        color = (255, 255, 255)
+                    else:
+                        color = COLORS[cell_id]
                     Tetromino.draw_piece(surface, (x, y), cell_size, color)

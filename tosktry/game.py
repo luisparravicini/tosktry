@@ -2,7 +2,7 @@ import random
 import pygame
 from pygame.locals import *
 from .tetromino import Tetromino
-from .fall_timer import FallTimer
+from .timer import Timer
 from .board import Board
 
 
@@ -25,18 +25,29 @@ class Game:
         pygame.display.set_caption('Tosktry')
         self.clock = pygame.time.Clock()
 
-        self.falling_timer = FallTimer(800)
+        self.falling_timer = Timer(800)
 
         pygame.key.set_repeat(150)
 
     def _update(self, dt):
-        reached_max = self.falling_timer.update(dt)
+        if not self.removing_lines:
+            reached_max = self.falling_timer.update(dt)
+            if reached_max:
+                self._move_down()
+        else:
+            self._update_remove_lines(dt)
+
+    def _update_remove_lines(self, dt):
+        reached_max = self.lineRemovalTimer.update(dt)
         if reached_max:
-            self._move_down()
+            self.board.remove_lines(self.completed_lines)
+            self.lineRemovalTimer = None
+            self.removing_lines = False
+            self.completed_lines = None
 
     def _draw(self):
         self.tetro.draw(self.screen, self.cell_size)
-        self.board.draw(self.screen, self.cell_size)
+        self.board.draw(self.screen, self.cell_size, self.completed_lines)
 
     def _createTetro(self):
         self.tetro = Tetromino(self.board.size[0] // 2 - 2, 0)
@@ -44,12 +55,15 @@ class Game:
     def _main(self):
         background_color = (40, 10, 40)
 
+        self.removing_lines = False
+        self.completed_lines = None
         self.done = False
         self._createTetro()
         while not self.done:
             dt = self.clock.tick(60)
 
-            self._process_input()
+            if not self.removing_lines:
+                self._process_input()
             self._update(dt)
 
             self.screen.fill(background_color)
@@ -86,7 +100,15 @@ class Game:
     def _move_down(self):
         if not self._move((0, 1)):
             self.board.consume(self.tetro)
+            completed_lines = self.board.check_completed_lines()
+            if len(completed_lines) > 0:
+                self._start_line_removal(completed_lines)
             self._createTetro()
+
+    def _start_line_removal(self, indices):
+        self.completed_lines = indices
+        self.removing_lines = True
+        self.lineRemovalTimer = Timer(250)
 
     def _move(self, deltas):
         new_pos = list(self.tetro.pos)

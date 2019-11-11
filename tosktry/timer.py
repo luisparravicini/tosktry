@@ -1,5 +1,5 @@
 
-class FallTimer:
+class Timer:
     def __init__(self, max):
         self.max = max
         self.modifier = 1
