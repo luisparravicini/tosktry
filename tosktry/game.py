@@ -111,6 +111,12 @@ class Game:
     def _rotate(self):
         self.tetro.rotate()
         self.board.push_into(self.tetro)
+        if not self.board.inside_board(self.tetro, self.tetro.pos):
+            # HACK if the rotated teromino falls outside the board
+            # it gets rotated back to it's original position by
+            # rotating it 3 times (270 degress + 90 of first rotation)
+            for _ in range(3):
+                self.tetro.rotate()
 
     def _move_down(self):
         if not self._move((0, 1)):

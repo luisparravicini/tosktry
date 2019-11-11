@@ -7,7 +7,7 @@ class Board:
         self.cells = [[None] * width for _ in range(height)]
 
     def can_move(self, tetro, pos):
-        if not self._inside_board(tetro, pos):
+        if not self.inside_board(tetro, pos):
             return False
 
         if self._collides_with_others(tetro, pos):
@@ -30,7 +30,7 @@ class Board:
 
         return False
 
-    def _inside_board(self, tetro, pos):
+    def inside_board(self, tetro, pos):
         bottom = pos[1] + tetro.height()
         if bottom >= self.size[1]:
             return False
