@@ -10,6 +10,7 @@ Runs with `tosktry.py`. Keys:
 * `right cursor`: Move right
 * `up cursor`: Rotate 90 degrees
 * `down cursor`: Fall faster
+* 'esc': Quit game
 
 ![](demo.gif)
 
