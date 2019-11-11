@@ -1,5 +1,3 @@
-#Tosktry
-
 Tosktry is a minimalist clone of Tetris with pygame.
 
 No highscores / menu (only the game over menu to restart or quit) / next piece / nothing else, just the game.
